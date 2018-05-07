@@ -26,9 +26,10 @@ namespace RPClientLib
 
         public bool Connect(String ipAddress, Int32 port)
         {
+            
             try
             {
-                client = new TcpClient(ipAddress, port);
+                client = new TcpClient(ipAddress, port);                
                 stream = client.GetStream();
                 System.Diagnostics.Debug.WriteLine("Connected");
             }
