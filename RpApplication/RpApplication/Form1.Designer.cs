@@ -128,6 +128,7 @@
             this.tb_log.Multiline = true;
             this.tb_log.Name = "tb_log";
             this.tb_log.ReadOnly = true;
+            this.tb_log.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tb_log.Size = new System.Drawing.Size(398, 520);
             this.tb_log.TabIndex = 2;
             // 
@@ -153,16 +154,18 @@
             this.axVLCPlugin21.Location = new System.Drawing.Point(41, 71);
             this.axVLCPlugin21.Name = "axVLCPlugin21";
             this.axVLCPlugin21.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axVLCPlugin21.OcxState")));
-            this.axVLCPlugin21.Size = new System.Drawing.Size(656, 480);
+            this.axVLCPlugin21.Size = new System.Drawing.Size(656, 481);
             this.axVLCPlugin21.TabIndex = 5;
+            this.axVLCPlugin21.MediaPlayerEncounteredError += new System.EventHandler(this.axVLCPlugin21_MediaPlayerEncounteredError);
             // 
             // transparentPanel1
             // 
-            this.transparentPanel1.Location = new System.Drawing.Point(41, 105);
+            this.transparentPanel1.Location = new System.Drawing.Point(41, 71);
             this.transparentPanel1.Name = "transparentPanel1";
             this.transparentPanel1.Opacity = 0;
-            this.transparentPanel1.Size = new System.Drawing.Size(656, 447);
+            this.transparentPanel1.Size = new System.Drawing.Size(656, 481);
             this.transparentPanel1.TabIndex = 6;
+            this.transparentPanel1.DoubleClick += new System.EventHandler(this.transparentPanel1_DoubleClick);
             this.transparentPanel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TransparentPanel1_MouseDown);
             this.transparentPanel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.transparentPanel1_MouseMove);
             this.transparentPanel1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.transparentPanel1_MouseUp);

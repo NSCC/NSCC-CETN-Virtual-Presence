@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -73,11 +74,9 @@ namespace RPClientLib
 
         public void ListenForMessages()
         {
-
             workerThread = new Thread(Receive);
             workerThread.Name = "My Worker Thread";
             workerThread.Start();
-
         }
 
 
@@ -90,8 +89,16 @@ namespace RPClientLib
                 {
                     try
                     {
-                        i = stream.Read(data, 0, data.Length);
-                        incomingMessage = System.Text.Encoding.ASCII.GetString(data, 0, i);
+                        MemoryStream memStream = new MemoryStream();
+                        
+                        do
+                        {
+                            i = stream.Read(data, 0, data.Length);
+                            memStream.Write(data, 0, i);
+                        }
+                        while (stream.DataAvailable);                        
+
+                        incomingMessage = System.Text.Encoding.ASCII.GetString(memStream.ToArray());
                         System.Diagnostics.Debug.WriteLine(incomingMessage);
 
                         if (incomingMessage == "quit")
