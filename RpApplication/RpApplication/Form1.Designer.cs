@@ -43,9 +43,14 @@
             this.tb_message = new System.Windows.Forms.TextBox();
             this.btn_send = new System.Windows.Forms.Button();
             this.axVLCPlugin21 = new AxAXVLC.AxVLCPlugin2();
+            this.soundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.c3POToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lostInSpaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.transparentPanel1 = new VideoTest.TransparentPanel(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axVLCPlugin21)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -55,10 +60,11 @@
             this.toolStripMenuItem1,
             this.networkToolStripMenuItem,
             this.headToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.soundsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1184, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1584, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -124,46 +130,80 @@
             // tb_log
             // 
             this.tb_log.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_log.Location = new System.Drawing.Point(744, 71);
+            this.tb_log.Location = new System.Drawing.Point(1174, 40);
             this.tb_log.Multiline = true;
             this.tb_log.Name = "tb_log";
             this.tb_log.ReadOnly = true;
             this.tb_log.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tb_log.Size = new System.Drawing.Size(398, 520);
+            this.tb_log.Size = new System.Drawing.Size(398, 575);
             this.tb_log.TabIndex = 2;
             // 
             // tb_message
             // 
-            this.tb_message.Location = new System.Drawing.Point(125, 668);
+            this.tb_message.Location = new System.Drawing.Point(1174, 638);
+            this.tb_message.Multiline = true;
             this.tb_message.Name = "tb_message";
-            this.tb_message.Size = new System.Drawing.Size(887, 20);
+            this.tb_message.Size = new System.Drawing.Size(398, 104);
             this.tb_message.TabIndex = 3;
             // 
             // btn_send
             // 
-            this.btn_send.Location = new System.Drawing.Point(1018, 666);
+            this.btn_send.Location = new System.Drawing.Point(1174, 758);
             this.btn_send.Name = "btn_send";
-            this.btn_send.Size = new System.Drawing.Size(75, 23);
+            this.btn_send.Size = new System.Drawing.Size(398, 31);
             this.btn_send.TabIndex = 4;
             this.btn_send.Text = "Send";
             this.btn_send.UseVisualStyleBackColor = true;
+            this.btn_send.Click += new System.EventHandler(this.btn_send_Click);
             // 
             // axVLCPlugin21
             // 
             this.axVLCPlugin21.Enabled = true;
-            this.axVLCPlugin21.Location = new System.Drawing.Point(41, 71);
+            this.axVLCPlugin21.Location = new System.Drawing.Point(20, 40);
             this.axVLCPlugin21.Name = "axVLCPlugin21";
             this.axVLCPlugin21.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axVLCPlugin21.OcxState")));
-            this.axVLCPlugin21.Size = new System.Drawing.Size(656, 481);
+            this.axVLCPlugin21.Size = new System.Drawing.Size(1128, 749);
             this.axVLCPlugin21.TabIndex = 5;
             this.axVLCPlugin21.MediaPlayerEncounteredError += new System.EventHandler(this.axVLCPlugin21_MediaPlayerEncounteredError);
             // 
+            // soundsToolStripMenuItem
+            // 
+            this.soundsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.c3POToolStripMenuItem,
+            this.lostInSpaceToolStripMenuItem});
+            this.soundsToolStripMenuItem.Name = "soundsToolStripMenuItem";
+            this.soundsToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
+            this.soundsToolStripMenuItem.Text = "Sounds";
+            // 
+            // c3POToolStripMenuItem
+            // 
+            this.c3POToolStripMenuItem.Name = "c3POToolStripMenuItem";
+            this.c3POToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.c3POToolStripMenuItem.Text = "C3PO";
+            this.c3POToolStripMenuItem.Click += new System.EventHandler(this.c3POToolStripMenuItem_Click);
+            // 
+            // lostInSpaceToolStripMenuItem
+            // 
+            this.lostInSpaceToolStripMenuItem.Name = "lostInSpaceToolStripMenuItem";
+            this.lostInSpaceToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.lostInSpaceToolStripMenuItem.Text = "Lost In Space";
+            this.lostInSpaceToolStripMenuItem.Click += new System.EventHandler(this.lostInSpaceToolStripMenuItem_Click);
+            // 
+            // trackBar1
+            // 
+            this.trackBar1.Location = new System.Drawing.Point(285, 813);
+            this.trackBar1.Maximum = 115;
+            this.trackBar1.Minimum = -115;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(584, 45);
+            this.trackBar1.TabIndex = 0;
+            // 
             // transparentPanel1
             // 
-            this.transparentPanel1.Location = new System.Drawing.Point(41, 71);
+            this.transparentPanel1.Location = new System.Drawing.Point(20, 40);
             this.transparentPanel1.Name = "transparentPanel1";
             this.transparentPanel1.Opacity = 0;
-            this.transparentPanel1.Size = new System.Drawing.Size(656, 481);
+            this.transparentPanel1.Size = new System.Drawing.Size(1128, 767);
             this.transparentPanel1.TabIndex = 6;
             this.transparentPanel1.DoubleClick += new System.EventHandler(this.transparentPanel1_DoubleClick);
             this.transparentPanel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TransparentPanel1_MouseDown);
@@ -174,7 +214,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1184, 761);
+            this.ClientSize = new System.Drawing.Size(1584, 861);
+            this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.transparentPanel1);
             this.Controls.Add(this.axVLCPlugin21);
             this.Controls.Add(this.btn_send);
@@ -182,15 +223,21 @@
             this.Controls.Add(this.tb_log);
             this.Controls.Add(this.menuStrip1);
             this.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
+            this.MaximizeBox = false;
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "RP Application";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axVLCPlugin21)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -211,6 +258,10 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private AxAXVLC.AxVLCPlugin2 axVLCPlugin21;
         private VideoTest.TransparentPanel transparentPanel1;
+        private System.Windows.Forms.ToolStripMenuItem soundsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem c3POToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem lostInSpaceToolStripMenuItem;
+        private System.Windows.Forms.TrackBar trackBar1;
     }
 }
 

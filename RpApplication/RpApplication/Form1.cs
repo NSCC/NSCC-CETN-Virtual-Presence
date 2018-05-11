@@ -64,12 +64,18 @@ namespace RpApplication
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (!isKeyDown) {
+            if (!isKeyDown && !tb_message.Focused) {
                 System.Diagnostics.Debug.WriteLine("key pressed: " + e.KeyCode.ToString().ToLower());
                 if (client != null)
                 {
-                    client.SendCommand(e.KeyCode.ToString().ToLower());
-                    
+                    if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+                    {
+                        client.SendCommand("p" + e.KeyCode.ToString().Substring(1));
+                    }
+                    else
+                    {
+                        client.SendCommand(e.KeyCode.ToString().ToLower());
+                    }                    
                 }
                 isKeyDown = true;
             }   
@@ -106,9 +112,7 @@ namespace RpApplication
             {
                 MethodInvoker invoker = new MethodInvoker(delegate ()
                 {
-
                     tb_log.AppendText(e.Message + "\n");
-
                 });
 
                 tb_log.BeginInvoke(invoker);
@@ -207,6 +211,39 @@ namespace RpApplication
         private void transparentPanel1_DoubleClick(object sender, EventArgs e)
         {
             client.SendCommand("cen");
+        }
+
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (client != null) {
+                client.Disconnect();
+            }
+        }
+
+        private void btn_send_Click(object sender, EventArgs e)
+        {
+            if (client != null)
+            {
+                client.SendCommand("##" + tb_message.Text);
+            }
+            tb_message.Text = "";
+        }
+
+        private void c3POToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (client != null)
+            {
+                client.SendCommand("B0");
+            }
+        }
+
+        private void lostInSpaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (client != null)
+            {
+                client.SendCommand("B1");
+            }
         }
     }
 }
