@@ -39,15 +39,15 @@
             this.headToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MItem_MouseControl = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.soundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.c3POToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lostInSpaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tb_log = new System.Windows.Forms.TextBox();
             this.tb_message = new System.Windows.Forms.TextBox();
             this.btn_send = new System.Windows.Forms.Button();
             this.axVLCPlugin21 = new AxAXVLC.AxVLCPlugin2();
-            this.soundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.c3POToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lostInSpaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
-            this.transparentPanel1 = new VideoTest.TransparentPanel(this.components);
+            this.tp_video = new VideoTest.TransparentPanel(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axVLCPlugin21)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -79,8 +79,9 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
             // networkToolStripMenuItem
             // 
@@ -119,13 +120,36 @@
             this.MItem_MouseControl.Name = "MItem_MouseControl";
             this.MItem_MouseControl.Size = new System.Drawing.Size(191, 22);
             this.MItem_MouseControl.Text = "Enable Mouse Control";
-            this.MItem_MouseControl.Click += new System.EventHandler(this.enableMouseControlToolStripMenuItem_Click);
+            this.MItem_MouseControl.Click += new System.EventHandler(this.EnableMouseControl_ToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.helpToolStripMenuItem.Text = "Camera";
+            // 
+            // soundsToolStripMenuItem
+            // 
+            this.soundsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.c3POToolStripMenuItem,
+            this.lostInSpaceToolStripMenuItem});
+            this.soundsToolStripMenuItem.Name = "soundsToolStripMenuItem";
+            this.soundsToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
+            this.soundsToolStripMenuItem.Text = "Sounds";
+            // 
+            // c3POToolStripMenuItem
+            // 
+            this.c3POToolStripMenuItem.Name = "c3POToolStripMenuItem";
+            this.c3POToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.c3POToolStripMenuItem.Text = "C3PO";
+            this.c3POToolStripMenuItem.Click += new System.EventHandler(this.C3POToolStripMenuItem_Click);
+            // 
+            // lostInSpaceToolStripMenuItem
+            // 
+            this.lostInSpaceToolStripMenuItem.Name = "lostInSpaceToolStripMenuItem";
+            this.lostInSpaceToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.lostInSpaceToolStripMenuItem.Text = "Lost In Space";
+            this.lostInSpaceToolStripMenuItem.Click += new System.EventHandler(this.LostInSpaceToolStripMenuItem_Click);
             // 
             // tb_log
             // 
@@ -154,7 +178,7 @@
             this.btn_send.TabIndex = 4;
             this.btn_send.Text = "Send";
             this.btn_send.UseVisualStyleBackColor = true;
-            this.btn_send.Click += new System.EventHandler(this.btn_send_Click);
+            this.btn_send.Click += new System.EventHandler(this.Btn_send_Click);
             // 
             // axVLCPlugin21
             // 
@@ -164,30 +188,7 @@
             this.axVLCPlugin21.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axVLCPlugin21.OcxState")));
             this.axVLCPlugin21.Size = new System.Drawing.Size(1128, 749);
             this.axVLCPlugin21.TabIndex = 5;
-            this.axVLCPlugin21.MediaPlayerEncounteredError += new System.EventHandler(this.axVLCPlugin21_MediaPlayerEncounteredError);
-            // 
-            // soundsToolStripMenuItem
-            // 
-            this.soundsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.c3POToolStripMenuItem,
-            this.lostInSpaceToolStripMenuItem});
-            this.soundsToolStripMenuItem.Name = "soundsToolStripMenuItem";
-            this.soundsToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
-            this.soundsToolStripMenuItem.Text = "Sounds";
-            // 
-            // c3POToolStripMenuItem
-            // 
-            this.c3POToolStripMenuItem.Name = "c3POToolStripMenuItem";
-            this.c3POToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
-            this.c3POToolStripMenuItem.Text = "C3PO";
-            this.c3POToolStripMenuItem.Click += new System.EventHandler(this.c3POToolStripMenuItem_Click);
-            // 
-            // lostInSpaceToolStripMenuItem
-            // 
-            this.lostInSpaceToolStripMenuItem.Name = "lostInSpaceToolStripMenuItem";
-            this.lostInSpaceToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
-            this.lostInSpaceToolStripMenuItem.Text = "Lost In Space";
-            this.lostInSpaceToolStripMenuItem.Click += new System.EventHandler(this.lostInSpaceToolStripMenuItem_Click);
+            this.axVLCPlugin21.MediaPlayerEncounteredError += new System.EventHandler(this.AxVLCPlugin21_MediaPlayerEncounteredError);
             // 
             // trackBar1
             // 
@@ -198,17 +199,17 @@
             this.trackBar1.Size = new System.Drawing.Size(584, 45);
             this.trackBar1.TabIndex = 0;
             // 
-            // transparentPanel1
+            // tp_video
             // 
-            this.transparentPanel1.Location = new System.Drawing.Point(20, 40);
-            this.transparentPanel1.Name = "transparentPanel1";
-            this.transparentPanel1.Opacity = 0;
-            this.transparentPanel1.Size = new System.Drawing.Size(1128, 767);
-            this.transparentPanel1.TabIndex = 6;
-            this.transparentPanel1.DoubleClick += new System.EventHandler(this.transparentPanel1_DoubleClick);
-            this.transparentPanel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TransparentPanel1_MouseDown);
-            this.transparentPanel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.transparentPanel1_MouseMove);
-            this.transparentPanel1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.transparentPanel1_MouseUp);
+            this.tp_video.Location = new System.Drawing.Point(20, 40);
+            this.tp_video.Name = "tp_video";
+            this.tp_video.Opacity = 0;
+            this.tp_video.Size = new System.Drawing.Size(1128, 767);
+            this.tp_video.TabIndex = 6;
+            this.tp_video.DoubleClick += new System.EventHandler(this.Tp_video_DoubleClick);
+            this.tp_video.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Tp_video_MouseDown);
+            this.tp_video.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Tp_video_MouseMove);
+            this.tp_video.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Tp_video_MouseUp);
             // 
             // Form1
             // 
@@ -216,7 +217,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1584, 861);
             this.Controls.Add(this.trackBar1);
-            this.Controls.Add(this.transparentPanel1);
+            this.Controls.Add(this.tp_video);
             this.Controls.Add(this.axVLCPlugin21);
             this.Controls.Add(this.btn_send);
             this.Controls.Add(this.tb_message);
@@ -257,7 +258,7 @@
         private System.Windows.Forms.ToolStripMenuItem MItem_MouseControl;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private AxAXVLC.AxVLCPlugin2 axVLCPlugin21;
-        private VideoTest.TransparentPanel transparentPanel1;
+        private VideoTest.TransparentPanel tp_video;
         private System.Windows.Forms.ToolStripMenuItem soundsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem c3POToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lostInSpaceToolStripMenuItem;

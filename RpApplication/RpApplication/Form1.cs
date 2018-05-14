@@ -12,31 +12,45 @@ using System.Windows.Forms;
 
 namespace RpApplication
 {
+    /// <summary>
+    /// Represents the main application form.
+    /// </summary>
     public partial class Form1 : Form
     {
         RPClient client = null;
         String ipAddress;
         Int32 port = 33000;
-        bool isKeyDown;
-        bool connected = false;
-        bool mouseEnabled = false;
-        bool mouseIsDown = false;
+        bool isKeyDown; // is a key cuurrently being pressed
+        bool connected = false; // are we currently connected to the robot
+        bool mouseEnabled = false; // has mouse control of the head been enabled
+        bool mouseIsDown = false; // is the mouse buttonbeing pressed
         int xPos = 0;
         int yPos = 0;
+        List<Keys> keys = new List<Keys>() {Keys.A, Keys.S, Keys.D, Keys.W, Keys.Q, Keys.E, // Direction controls
+                                            Keys.J, Keys.K, Keys.L, Keys.I, // Head controls
+                                            Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9}; // Sound controls
 
+        /// <summary>
+        /// Creates an instance of the main application form.
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
-            this.client = new RPClient();    
+            this.client = new RPClient();
         }
         
-
+        
+        /// <summary>
+        /// Handles clicking the CONNECT menu item located in the NETWORK menu. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Connect_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
             using (ConnectDialog connDialog = new ConnectDialog())
             {
-                if ( connDialog.ShowDialog() == DialogResult.OK)
+                if (connDialog.ShowDialog() == DialogResult.OK)
                 {
                     ipAddress = connDialog.IpAddress;
 
@@ -62,10 +76,40 @@ namespace RpApplication
         }
 
 
+        /// <summary>
+        /// Handles clicking the DISCONNECT menu item in the NETWORKING menu.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Disconnect_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (client != null)
+            {
+                client.SendCommand("quit");
+                client.Disconnect();
+            }
+
+            connected = false;
+            connectToolStripMenuItem.Enabled = true;
+            disconnectToolStripMenuItem.Enabled = false;
+
+            axVLCPlugin21.playlist.stop();
+        }
+
+
+        /// <summary>
+        /// Handles key presses that will send a command to control the robot's motions and sounds.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (!isKeyDown && !tb_message.Focused) {
+            
+            if (!isKeyDown && !tb_message.Focused && keys.Contains(e.KeyCode))
+            {
+                // TODO: Remove this line, for testing only
                 System.Diagnostics.Debug.WriteLine("key pressed: " + e.KeyCode.ToString().ToLower());
+
                 if (client != null)
                 {
                     if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
@@ -82,49 +126,78 @@ namespace RpApplication
         }
 
 
+        /// <summary>
+        /// Handles the key up event that will send a command to stop the robot's current motion.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
+            //TODO: Remove this code for testing only
             System.Diagnostics.Debug.WriteLine("key up");
-            if (client != null) {
+
+            if (client != null)
+            {
                 client.SendCommand("stop");
             }           
             isKeyDown = false;
         }
+                       
 
-
-        private void Disconnect_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (client != null)
-            {
-                client.Disconnect();                
-            }
-            
-            connected = false;
-            connectToolStripMenuItem.Enabled = true;
-
-            axVLCPlugin21.playlist.stop();
-        }       
-
-
+        /// <summary>
+        /// Handles the message received event and logs the message to the log window.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RPClientLib_ReceiveMessage(object sender, ReceivedMessageEventArgs e)
         {
+            String message = String.Empty;
+
+            if (e.Message[0] == 'q')
+            {                
+                message = "The robot has disconnected";
+                if (this.InvokeRequired)
+                {
+                    MethodInvoker invoker = new MethodInvoker(delegate ()
+                    {
+                        this.RemoteDisconnect();
+                    });
+
+                    this.BeginInvoke(invoker);
+                }
+                else
+                {
+                    this.RemoteDisconnect();
+                }
+            }
+            else
+            {
+                message = e.Message;
+            }           
+
             if (tb_log.InvokeRequired)
             {
                 MethodInvoker invoker = new MethodInvoker(delegate ()
                 {
-                    tb_log.AppendText(e.Message + "\n");
+                    tb_log.AppendText(message + "\n");
+                    
                 });
 
                 tb_log.BeginInvoke(invoker);
             }
             else
             {
-                tb_log.AppendText(e.Message + "\n");
+                tb_log.AppendText(message + "\n");
             }
         }
 
 
-        private void enableMouseControlToolStripMenuItem_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Handles clicking the ENABLE MOUSE CONTROL menu item in the HEAD menu.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EnableMouseControl_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (mouseEnabled)
             {
@@ -139,13 +212,26 @@ namespace RpApplication
         }
             
 
-        private void TransparentPanel1_MouseDown(object sender, MouseEventArgs e)
+        /// <summary>
+        /// Handles the mouse down event whent the user clicks in the video display. 
+        /// The transparent panel is used because the VLC plugin does not have an on click event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Tp_video_MouseDown(object sender, MouseEventArgs e)
         {
             mouseIsDown = true;
         }
 
 
-        private void transparentPanel1_MouseMove(object sender, MouseEventArgs e)
+        /// <summary>
+        /// Handles the mouse move event (while the mouse button is down) on 
+        /// the video display (actually the transparent panel overlay) and 
+        /// sends a command to control the motion of the robot's head.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Tp_video_MouseMove(object sender, MouseEventArgs e)
         {
             if (mouseIsDown)
             {
@@ -187,41 +273,85 @@ namespace RpApplication
         }
 
 
-        private void transparentPanel1_MouseUp(object sender, MouseEventArgs e)
+        /// <summary>
+        /// Handles the mouse up event for the video display (actually the transparent panel).
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Tp_video_MouseUp(object sender, MouseEventArgs e)
         {
             mouseIsDown = false;
         }
 
 
-        private void axVLCPlugin21_MediaPlayerEncounteredError(object sender, EventArgs e)
+        /// <summary>
+        /// Handles errors from the VLC plugin.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AxVLCPlugin21_MediaPlayerEncounteredError(object sender, EventArgs e)
         {
             tb_log.AppendText("Unable to connect to video stream\n");            
         }
 
-        private void StartVideo()
-        {
-            string options = ":network-caching=0, :file-caching=0, :disc-caching=0, :live-capture-caching=0";
-            //axVLCPlugin21.playlist.add(@"file:///C:\Users\Mike Laptop\Desktop\movies\2001.mp4");
-            //axVLCPlugin21.playlist.add(@"udp://@", null, options);
-            axVLCPlugin21.playlist.add(@"rtsp://192.168.137.7:8554/rp7.stream", null, options);
-            axVLCPlugin21.playlist.play();
-            tb_log.AppendText("Waiting for video...\n");
-        }
 
-        private void transparentPanel1_DoubleClick(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the double click event for the video display sending the 
+        /// command to center the robot's head.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Tp_video_DoubleClick(object sender, EventArgs e)
         {
             client.SendCommand("cen");
         }
 
 
+        /// <summary>
+        /// Starts the video stream after a successful connection to the robot.
+        /// Note: The video stream takes quite a while to initially load (maybe 10+ seconds)
+        /// </summary>
+        private void StartVideo()
+        {
+            string options = ":network-caching=0, :file-caching=0, :disc-caching=0, :live-capture-caching=0";           
+            axVLCPlugin21.playlist.add(@"rtsp://192.168.137.7:8554/rp7.stream", null, options);
+            axVLCPlugin21.playlist.play();
+            tb_log.AppendText("Waiting for video...\n");
+        }
+                
+
+        /// <summary>
+        /// Handles the form closing event making sure that we properly close the connection and 
+        /// deal with the receive message thread.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (client != null) {
-                client.Disconnect();
+
+            if (!CloseForm())
+            {
+                e.Cancel = true;
             }
+            else
+            {
+                if (client != null && connected)
+                {
+                    client.SendCommand("quit");
+                    client.Disconnect();
+                }
+            }
+           
         }
 
-        private void btn_send_Click(object sender, EventArgs e)
+
+        /// <summary>
+        /// Handles clicking the send button and sends the message in the message 
+        /// text box to the robot to be processed with TTS.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_send_Click(object sender, EventArgs e)
         {
             if (client != null)
             {
@@ -230,7 +360,14 @@ namespace RpApplication
             tb_message.Text = "";
         }
 
-        private void c3POToolStripMenuItem_Click(object sender, EventArgs e)
+
+        /// <summary>
+        /// Handles clicking the C3PO menu item in the SOUNDS menu and sends 
+        /// the command to switch to the C3PO sound bank.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void C3POToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (client != null)
             {
@@ -238,12 +375,61 @@ namespace RpApplication
             }
         }
 
-        private void lostInSpaceToolStripMenuItem_Click(object sender, EventArgs e)
+
+        /// <summary>
+        /// Handles clicking the LOST IN SPACE menu item in the COUNDS menu and sends
+        /// the command to switch to the LOST IN SPACE sound bank.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LostInSpaceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (client != null)
             {
                 client.SendCommand("B1");
             }
+        }
+
+
+        /// <summary>
+        /// Handles a remote disconnect. Triggered when the robot's sent message is "quit".
+        /// </summary>
+        private void RemoteDisconnect()
+        {
+            client.Disconnect();
+            disconnectToolStripMenuItem.Enabled = false;
+            connectToolStripMenuItem.Enabled = true;           
+        }
+
+
+        private bool CloseForm()
+        {
+            string message = "Are you sure you wan to exit?";
+            string caption = "Confirm Exit";
+            var result = MessageBox.Show(message, caption,
+                             MessageBoxButtons.YesNo,
+                             MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                return true;
+            }
+            else
+            {   
+                
+                return false;
+            }
+        }
+
+
+        /// <summary>
+        /// Handle clicking the EXIT menu item in the FILE menu.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();           
         }
     }
 }

@@ -25,9 +25,14 @@ namespace RPClientLib
         public RPClient() { }
 
 
+        /// <summary>
+        /// Makes a connection to the robot.
+        /// </summary>
+        /// <param name="ipAddress">The robot's IP Address</param>
+        /// <param name="port">The port the robot is listening on.</param>
+        /// <returns></returns>
         public bool Connect(String ipAddress, Int32 port)
-        {
-            
+        {            
             try
             {
                 client = new TcpClient(ipAddress, port);                
@@ -38,14 +43,17 @@ namespace RPClientLib
             {
                 System.Diagnostics.Debug.WriteLine("Unable to connect: " + ex.Message);
                 return false;
-            }
-           
+            }           
            
             return true;
         }
 
+
+        /// <summary>
+        /// Closes the connection to the robot.
+        /// </summary>
         public void Disconnect()
-        {
+        {            
             if (workerThread != null)
             {
                 stopReceiving = true;
@@ -62,8 +70,12 @@ namespace RPClientLib
                 client.Close();
             }
         }
+       
 
-
+        /// <summary>
+        /// Sends a message to the robot.
+        /// </summary>
+        /// <param name="command"></param>
         public void SendCommand(String command)
         {
             data = System.Text.Encoding.ASCII.GetBytes(command);
@@ -72,6 +84,9 @@ namespace RPClientLib
         }
 
 
+        /// <summary>
+        /// Starts the thread to listen for incoming messages from the robot.
+        /// </summary>
         public void ListenForMessages()
         {
             workerThread = new Thread(Receive);
@@ -80,6 +95,9 @@ namespace RPClientLib
         }
 
 
+        /// <summary>
+        /// Recieves an incoming message from the robot.
+        /// </summary>
         private void Receive()
         {
             while (!stopReceiving)
@@ -99,27 +117,23 @@ namespace RPClientLib
                         while (stream.DataAvailable);                        
 
                         incomingMessage = System.Text.Encoding.ASCII.GetString(memStream.ToArray());
-                        System.Diagnostics.Debug.WriteLine(incomingMessage);
 
-                        if (incomingMessage == "quit")
+                        //TODO: Delete this line for testing only.
+                        System.Diagnostics.Debug.WriteLine(incomingMessage);
+                        
+                        if (ReceiveMessage != null)
                         {
-                            // TODO: Somekind of message that the server closed the connection
-                        }
-                        else if (ReceiveMessage != null)
-                        {
+                         
                             ReceiveMessage(this, new ReceivedMessageEventArgs(incomingMessage));
                         }
                     }
                     catch (ObjectDisposedException e)
                     {
                         //TODO: Handle the error.
-                    }
-                    
+                    }                    
                 }
             }
-
         }
-
 
     }
 }

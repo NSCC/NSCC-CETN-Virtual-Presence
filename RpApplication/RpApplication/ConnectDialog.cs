@@ -12,18 +12,34 @@ namespace RpApplication
 {
     public partial class ConnectDialog : Form
     {
-
+        /// <summary>
+        /// The ip address of the robot.
+        /// </summary>
         public String IpAddress { get; set; }
+
+
+        /// <summary>
+        /// Creates an instance of the connect dialog.
+        /// </summary>
         public ConnectDialog()
         {
             InitializeComponent();
             tb_ipAddress.Text = "192.168.137.7";
         }
         
-
-        private void btn_connect_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Handles clicking the connect button and sets the ip address to the value the user entered.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_connect_Click(object sender, EventArgs e)
         {
             IpAddress = tb_ipAddress.Text;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.Dispose();
         }
     }
 }
