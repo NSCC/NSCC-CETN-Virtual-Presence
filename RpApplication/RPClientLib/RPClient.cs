@@ -78,9 +78,27 @@ namespace RPClientLib
         /// <param name="command"></param>
         public void SendCommand(String command)
         {
-            data = System.Text.Encoding.ASCII.GetBytes(command);
-            stream.Write(data, 0, data.Length);
-            System.Diagnostics.Debug.WriteLine("Command sent: " + command);
+            if (stream.CanWrite)
+            {
+                data = System.Text.Encoding.ASCII.GetBytes(command);
+                try
+                {
+                    stream.Write(data, 0, data.Length);
+
+                    // TODO: Delete this line for testing only
+                    System.Diagnostics.Debug.WriteLine("Command sent: " + command);
+
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Command could not be sent: " + ex.Message);
+                }
+               
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Command could not be sent: Cannot write to network stream");
+            }      
         }
 
 

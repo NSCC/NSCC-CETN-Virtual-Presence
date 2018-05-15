@@ -264,7 +264,7 @@ namespace RpApplication
                     client.SendCommand("hx" + xDiff.ToString() + "y" + yDiff.ToString());
 
                     // Sleep to avoid sending multiple commands too quickly
-                    System.Threading.Thread.Sleep(60);
+                    System.Threading.Thread.Sleep(100);
                 }
 
                 xPos = e.X;
