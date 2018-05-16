@@ -24,7 +24,7 @@ namespace RpApplication
         public ConnectDialog()
         {
             InitializeComponent();
-            tb_ipAddress.Text = "192.168.137.7";
+            tb_ipAddress.Text = "192.168.137.161";
         }
         
         /// <summary>

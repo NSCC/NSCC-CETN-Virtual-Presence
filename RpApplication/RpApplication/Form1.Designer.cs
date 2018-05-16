@@ -42,15 +42,21 @@
             this.soundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.c3POToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lostInSpaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.commandListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tb_log = new System.Windows.Forms.TextBox();
             this.tb_message = new System.Windows.Forms.TextBox();
             this.btn_send = new System.Windows.Forms.Button();
             this.axVLCPlugin21 = new AxAXVLC.AxVLCPlugin2();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.tbar_pan = new System.Windows.Forms.TrackBar();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.tp_video = new VideoTest.TransparentPanel(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axVLCPlugin21)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbar_pan)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -61,7 +67,8 @@
             this.networkToolStripMenuItem,
             this.headToolStripMenuItem,
             this.helpToolStripMenuItem,
-            this.soundsToolStripMenuItem});
+            this.soundsToolStripMenuItem,
+            this.helpToolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1584, 24);
@@ -79,7 +86,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -151,27 +158,54 @@
             this.lostInSpaceToolStripMenuItem.Text = "Lost In Space";
             this.lostInSpaceToolStripMenuItem.Click += new System.EventHandler(this.LostInSpaceToolStripMenuItem_Click);
             // 
+            // helpToolStripMenuItem1
+            // 
+            this.helpToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.commandListToolStripMenuItem,
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem1.Name = "helpToolStripMenuItem1";
+            this.helpToolStripMenuItem1.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem1.Text = "Help";
+            // 
+            // commandListToolStripMenuItem
+            // 
+            this.commandListToolStripMenuItem.Name = "commandListToolStripMenuItem";
+            this.commandListToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.commandListToolStripMenuItem.Text = "Command List";
+            this.commandListToolStripMenuItem.Click += new System.EventHandler(this.CommandListToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
+            // 
             // tb_log
             // 
             this.tb_log.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_log.Location = new System.Drawing.Point(1174, 40);
+            this.tb_log.Location = new System.Drawing.Point(1174, 61);
             this.tb_log.Multiline = true;
             this.tb_log.Name = "tb_log";
             this.tb_log.ReadOnly = true;
             this.tb_log.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tb_log.Size = new System.Drawing.Size(398, 575);
+            this.tb_log.Size = new System.Drawing.Size(398, 554);
             this.tb_log.TabIndex = 2;
             // 
             // tb_message
             // 
-            this.tb_message.Location = new System.Drawing.Point(1174, 638);
+            this.tb_message.Location = new System.Drawing.Point(1174, 656);
             this.tb_message.Multiline = true;
             this.tb_message.Name = "tb_message";
-            this.tb_message.Size = new System.Drawing.Size(398, 104);
+            this.tb_message.Size = new System.Drawing.Size(398, 86);
             this.tb_message.TabIndex = 3;
+            this.tb_message.TextChanged += new System.EventHandler(this.Tb_message_TextChanged);
+            this.tb_message.Enter += new System.EventHandler(this.tb_message_Enter);
+            this.tb_message.Leave += new System.EventHandler(this.Tb_message_Leave);
             // 
             // btn_send
             // 
+            this.btn_send.Enabled = false;
             this.btn_send.Location = new System.Drawing.Point(1174, 758);
             this.btn_send.Name = "btn_send";
             this.btn_send.Size = new System.Drawing.Size(398, 31);
@@ -190,21 +224,52 @@
             this.axVLCPlugin21.TabIndex = 5;
             this.axVLCPlugin21.MediaPlayerEncounteredError += new System.EventHandler(this.AxVLCPlugin21_MediaPlayerEncounteredError);
             // 
-            // trackBar1
+            // tbar_pan
             // 
-            this.trackBar1.Location = new System.Drawing.Point(285, 813);
-            this.trackBar1.Maximum = 115;
-            this.trackBar1.Minimum = -115;
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(584, 45);
-            this.trackBar1.TabIndex = 0;
+            this.tbar_pan.Enabled = false;
+            this.tbar_pan.Location = new System.Drawing.Point(294, 815);
+            this.tbar_pan.Maximum = 115;
+            this.tbar_pan.Minimum = -115;
+            this.tbar_pan.Name = "tbar_pan";
+            this.tbar_pan.Size = new System.Drawing.Size(584, 45);
+            this.tbar_pan.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.label1.Location = new System.Drawing.Point(1176, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(33, 18);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Log";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.label2.Location = new System.Drawing.Point(1176, 632);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(247, 18);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Enter a Message for Text-to-Speech";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.label3.Location = new System.Drawing.Point(518, 794);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(149, 18);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "Camera Pan Position";
             // 
             // tp_video
             // 
             this.tp_video.Location = new System.Drawing.Point(20, 40);
             this.tp_video.Name = "tp_video";
             this.tp_video.Opacity = 0;
-            this.tp_video.Size = new System.Drawing.Size(1128, 767);
+            this.tp_video.Size = new System.Drawing.Size(1128, 749);
             this.tp_video.TabIndex = 6;
             this.tp_video.DoubleClick += new System.EventHandler(this.Tp_video_DoubleClick);
             this.tp_video.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Tp_video_MouseDown);
@@ -216,7 +281,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1584, 861);
-            this.Controls.Add(this.trackBar1);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.tbar_pan);
             this.Controls.Add(this.tp_video);
             this.Controls.Add(this.axVLCPlugin21);
             this.Controls.Add(this.btn_send);
@@ -233,12 +301,13 @@
             this.Text = "RP Application";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.Click += new System.EventHandler(this.Form1_Click);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axVLCPlugin21)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbar_pan)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -262,7 +331,13 @@
         private System.Windows.Forms.ToolStripMenuItem soundsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem c3POToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lostInSpaceToolStripMenuItem;
-        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.TrackBar tbar_pan;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem commandListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 

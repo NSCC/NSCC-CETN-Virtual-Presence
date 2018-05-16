@@ -23,12 +23,13 @@ namespace RpApplication
         bool isKeyDown; // is a key cuurrently being pressed
         bool connected = false; // are we currently connected to the robot
         bool mouseEnabled = false; // has mouse control of the head been enabled
-        bool mouseIsDown = false; // is the mouse buttonbeing pressed
+        bool mouseIsDown = false; // is the mouse button being pressed
         int xPos = 0;
         int yPos = 0;
         List<Keys> keys = new List<Keys>() {Keys.A, Keys.S, Keys.D, Keys.W, Keys.Q, Keys.E, // Direction controls
                                             Keys.J, Keys.K, Keys.L, Keys.I, // Head controls
-                                            Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9}; // Sound controls
+                                            Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, // Sound controls
+                                            Keys.Enter}; // send a message
 
         /// <summary>
         /// Creates an instance of the main application form.
@@ -36,7 +37,7 @@ namespace RpApplication
         public Form1()
         {
             InitializeComponent();
-            this.client = new RPClient();
+            tb_log.AppendText("Wait for robot to calibrate before connecting.\n");
         }
         
         
@@ -47,6 +48,7 @@ namespace RpApplication
         /// <param name="e"></param>
         private void Connect_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            this.client = new RPClient();
 
             using (ConnectDialog connDialog = new ConnectDialog())
             {
@@ -93,6 +95,10 @@ namespace RpApplication
             connectToolStripMenuItem.Enabled = true;
             disconnectToolStripMenuItem.Enabled = false;
 
+            // reset the GUI pan position  
+            tbar_pan.Value = 0;
+
+            // stop the video
             axVLCPlugin21.playlist.stop();
         }
 
@@ -103,26 +109,34 @@ namespace RpApplication
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Form1_KeyDown(object sender, KeyEventArgs e)
-        {
-            
-            if (!isKeyDown && !tb_message.Focused && keys.Contains(e.KeyCode))
-            {
-                // TODO: Remove this line, for testing only
-                System.Diagnostics.Debug.WriteLine("key pressed: " + e.KeyCode.ToString().ToLower());
-
-                if (client != null)
+        {            
+                
+                if (!isKeyDown && !tb_message.Focused && keys.Contains(e.KeyCode))
                 {
-                    if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+                    // TODO: Remove this line, for testing only
+                    System.Diagnostics.Debug.WriteLine("key pressed: " + e.KeyCode.ToString().ToLower());
+
+                    if (client != null)
                     {
-                        client.SendCommand("p" + e.KeyCode.ToString().Substring(1));
+                        if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+                        {
+                            client.SendCommand("p" + e.KeyCode.ToString().Substring(1));
+                        }
+
+                        else
+                        {
+                            client.SendCommand(e.KeyCode.ToString().ToLower());
+                        }
                     }
-                    else
-                    {
-                        client.SendCommand(e.KeyCode.ToString().ToLower());
-                    }                    
+                    isKeyDown = true;
                 }
-                isKeyDown = true;
-            }   
+                else
+                {
+                    if (e.KeyCode == Keys.Enter)
+                    {
+                        btn_send.PerformClick();
+                    }
+                }           
         }
 
 
@@ -133,9 +147,10 @@ namespace RpApplication
         /// <param name="e"></param>
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            //TODO: Remove this code for testing only
+            //TODO: Remove this code -  for testing only
             System.Diagnostics.Debug.WriteLine("key up");
 
+            // Send key up all the time as a safety precaution (for now anyway)
             if (client != null)
             {
                 client.SendCommand("stop");
@@ -145,7 +160,7 @@ namespace RpApplication
                        
 
         /// <summary>
-        /// Handles the message received event and logs the message to the log window.
+        /// Handles the message received event and processes them as required.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -154,7 +169,7 @@ namespace RpApplication
             String message = String.Empty;
 
             if (e.Message[0] == 'q')
-            {                
+            {
                 message = "The robot has disconnected";
                 if (this.InvokeRequired)
                 {
@@ -168,6 +183,34 @@ namespace RpApplication
                 else
                 {
                     this.RemoteDisconnect();
+                }
+            }
+            else if (e.Message.Substring(0,3) == "pan")
+            {
+                if (tbar_pan.InvokeRequired)
+                {
+                    MethodInvoker invoker = new MethodInvoker(delegate ()
+                    {
+                        Int32 val;
+                        if (int.TryParse(e.Message.Substring(3), out val))
+                        {
+                            if (val <= 115 && val > -115) {
+                                tbar_pan.Value = val;
+                            } 
+                            
+                        }
+                    });
+                    tbar_pan.BeginInvoke(invoker);
+                }
+                else {
+                    Int32 val;
+                    if (int.TryParse(e.Message.Substring(3), out val))
+                    {
+                        if (val <= 115 && val > -115)
+                        {
+                            tbar_pan.Value = val;
+                        }
+                    }
                 }
             }
             else
@@ -259,7 +302,7 @@ namespace RpApplication
                 // TODO: Remove for testing only
                 System.Diagnostics.Debug.WriteLine("X: " + xDiff + " Y: " + yDiff);
 
-                if (client != null && connected && mouseEnabled)
+                if (client != null && mouseEnabled)
                 {
                     client.SendCommand("hx" + xDiff.ToString() + "y" + yDiff.ToString());
 
@@ -303,7 +346,11 @@ namespace RpApplication
         /// <param name="e"></param>
         private void Tp_video_DoubleClick(object sender, EventArgs e)
         {
-            client.SendCommand("cen");
+            if (client != null)
+            {
+                client.SendCommand("cen");
+            }
+            
         }
 
 
@@ -328,20 +375,18 @@ namespace RpApplication
         /// <param name="e"></param>
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-
             if (!CloseForm())
             {
                 e.Cancel = true;
             }
             else
             {
-                if (client != null && connected)
+                if (client != null)
                 {
                     client.SendCommand("quit");
                     client.Disconnect();
                 }
-            }
-           
+            }           
         }
 
 
@@ -357,7 +402,9 @@ namespace RpApplication
             {
                 client.SendCommand("##" + tb_message.Text);
             }
-            tb_message.Text = "";
+            tb_message.Clear();
+            btn_send.Enabled = false;
+            this.ActiveControl = tp_video;
         }
 
 
@@ -402,6 +449,10 @@ namespace RpApplication
         }
 
 
+        /// <summary>
+        /// Displays a message box to confirm that the user wants to exit the application.
+        /// </summary>
+        /// <returns>True if the user confirms exit or False if cancelled.</returns>
         private bool CloseForm()
         {
             string message = "Are you sure you wan to exit?";
@@ -415,8 +466,7 @@ namespace RpApplication
                 return true;
             }
             else
-            {   
-                
+            {                   
                 return false;
             }
         }
@@ -430,6 +480,68 @@ namespace RpApplication
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();           
+        }
+
+
+        /// <summary>
+        /// Handles text changed event for the message text box to enable/disable 
+        /// the send button whether or not there is any text to send.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Tb_message_TextChanged(object sender, EventArgs e)
+        {
+            if (tb_message.Text.Length > 0)
+            {
+                btn_send.Enabled = true;
+            }
+            else
+            {
+                btn_send.Enabled = false;
+            }
+        }
+
+
+        /// <summary>
+        /// Handles the leave focus event for the message textbox and disables the send button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Tb_message_Leave(object sender, EventArgs e)
+        {
+            btn_send.Enabled = false;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Form1_Click(object sender, EventArgs e)
+        {
+            this.ActiveControl = tp_video;
+            btn_send.Enabled = false;
+        }
+
+        private void tb_message_Enter(object sender, EventArgs e)
+        {
+            if (tb_message.Text.Length > 0)
+            {
+                btn_send.Enabled = true;
+            }
+        }
+
+        private void CommandListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CommandsDialog commandDialog = new CommandsDialog();
+            commandDialog.ShowDialog();
+            
+        }
+
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
