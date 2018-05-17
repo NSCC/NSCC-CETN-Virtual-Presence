@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RpApplication.Properties;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,6 +17,7 @@ namespace RpApplication
         /// The ip address of the robot.
         /// </summary>
         public String IpAddress { get; set; }
+        
 
 
         /// <summary>
@@ -40,6 +42,19 @@ namespace RpApplication
         private void button1_Click(object sender, EventArgs e)
         {
             this.Dispose();
+        }
+
+        private void ConnectDialog_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Settings.Default.Save();
+        }
+
+        private void ConnectDialog_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btn_connect.PerformClick();
+            }
         }
     }
 }

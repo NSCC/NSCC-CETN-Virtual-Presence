@@ -26,10 +26,19 @@ namespace RpApplication
         bool mouseIsDown = false; // is the mouse button being pressed
         int xPos = 0;
         int yPos = 0;
+        int xDistance = 7; // how much to pan the head each time the command is sent
+        int yDistance = 4; // how much to tilt the head each time the command is sent
+
+        // A list of keys that will send commands. This list is checked so that key presses that don't do anything aren't sent.
         List<Keys> keys = new List<Keys>() {Keys.A, Keys.S, Keys.D, Keys.W, Keys.Q, Keys.E, // Direction controls
                                             Keys.J, Keys.K, Keys.L, Keys.I, // Head controls
                                             Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, // Sound controls
-                                            Keys.Enter}; // send a message
+                                            Keys.Enter, // send a message
+                                            Keys.Space}; // center the head
+
+
+
+        //DebounceDispatcher mouseMoveThrottle = new DebounceDispatcher();
 
         /// <summary>
         /// Creates an instance of the main application form.
@@ -61,6 +70,7 @@ namespace RpApplication
                     if (!client.Connect(ipAddress, port))
                     {
                         tb_log.AppendText("Could not connect.\n");
+                        client = null;
                     }
                     else
                     {
@@ -100,6 +110,7 @@ namespace RpApplication
 
             // stop the video
             axVLCPlugin21.playlist.stop();
+            tb_log.AppendText("Disconnected");
         }
 
 
@@ -109,34 +120,32 @@ namespace RpApplication
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Form1_KeyDown(object sender, KeyEventArgs e)
-        {            
-                
-                if (!isKeyDown && !tb_message.Focused && keys.Contains(e.KeyCode))
+        {                    
+            if (!isKeyDown && !tb_message.Focused && keys.Contains(e.KeyCode))
+            {
+                // TODO: Remove this line, for testing only
+                System.Diagnostics.Debug.WriteLine("key pressed: " + e.KeyCode.ToString().ToLower());
+
+                if (client != null)
                 {
-                    // TODO: Remove this line, for testing only
-                    System.Diagnostics.Debug.WriteLine("key pressed: " + e.KeyCode.ToString().ToLower());
-
-                    if (client != null)
+                    if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
                     {
-                        if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
-                        {
-                            client.SendCommand("p" + e.KeyCode.ToString().Substring(1));
-                        }
-
-                        else
-                        {
-                            client.SendCommand(e.KeyCode.ToString().ToLower());
-                        }
+                        client.SendCommand("p" + e.KeyCode.ToString().Substring(1));
                     }
-                    isKeyDown = true;
+                    else
+                    {
+                        client.SendCommand(e.KeyCode.ToString().ToLower());
+                    }
                 }
-                else
+                isKeyDown = true;
+            }
+            else
+            {
+                if (e.KeyCode == Keys.Enter)
                 {
-                    if (e.KeyCode == Keys.Enter)
-                    {
-                        btn_send.PerformClick();
-                    }
-                }           
+                    btn_send.PerformClick();
+                }
+            }           
         }
 
 
@@ -185,7 +194,7 @@ namespace RpApplication
                     this.RemoteDisconnect();
                 }
             }
-            else if (e.Message.Substring(0,3) == "pan")
+            else if (e.Message.Substring(0, 3) == "pan")
             {
                 if (tbar_pan.InvokeRequired)
                 {
@@ -194,21 +203,68 @@ namespace RpApplication
                         Int32 val;
                         if (int.TryParse(e.Message.Substring(3), out val))
                         {
-                            if (val <= 115 && val > -115) {
+                            if (val <= 115 && val > -115)
+                            {
                                 tbar_pan.Value = val;
-                            } 
-                            
+                            }
+
                         }
                     });
                     tbar_pan.BeginInvoke(invoker);
                 }
-                else {
+                else
+                {
                     Int32 val;
                     if (int.TryParse(e.Message.Substring(3), out val))
                     {
                         if (val <= 115 && val > -115)
                         {
                             tbar_pan.Value = val;
+                        }
+                    }
+                }
+            }
+            else if (e.Message.Substring(0, 4) == "batt")
+            {
+                if (panel_battLevel.InvokeRequired)
+                {
+                    MethodInvoker invoker = new MethodInvoker(delegate ()
+                    {
+                        double batt;
+                        if (double.TryParse(e.Message.Substring(4), out batt))
+                        {                            
+                            if (batt < 20.5)
+                            {
+                                panel_battLevel.Width = 0;
+                            }
+                            else if (batt > 28.5)
+                            {
+                                panel_battLevel.Width = 200;
+                            }
+                            else
+                            {
+                                panel_battLevel.Width = ((int)batt - 20) * 20;
+                            }
+                        }
+                    });
+                    panel_battLevel.BeginInvoke(invoker);
+                }
+                else
+                {
+                    double batt;
+                    if (double.TryParse(e.Message.Substring(4), out batt))
+                    {                       
+                        if (batt < 20.5)
+                        {
+                            panel_battLevel.Width = 0;
+                        }
+                        else if (batt > 28.5)
+                        {
+                            panel_battLevel.Width = 200;
+                        }
+                        else
+                        {
+                            panel_battLevel.Width = ((int)batt - 20) * 20;
                         }
                     }
                 }
@@ -276,43 +332,46 @@ namespace RpApplication
         /// <param name="e"></param>
         private void Tp_video_MouseMove(object sender, MouseEventArgs e)
         {
-            if (mouseIsDown)
-            {
-                int yDiff = 0;
-                int xDiff = 0;
-
-                if (e.X > xPos && Math.Abs(xPos - e.X) > 5)
+            //mouseMoveThrottle.Throttle(100, action =>
+            //{
+                if (mouseIsDown)
                 {
-                    xDiff = 5;
-                }
-                else if (e.X < xPos && Math.Abs(xPos - e.X) > 5)
-                {
-                    xDiff = -5;
-                }
+                    int yDiff = 0;
+                    int xDiff = 0;
 
-                if (e.Y > yPos && Math.Abs(yPos - e.Y) > 5)
-                {
-                    yDiff = 2;
+                    if (e.X > xPos && Math.Abs(xPos - e.X) > 5)
+                    {
+                        xDiff = xDistance;
+                    }
+                    else if (e.X < xPos && Math.Abs(xPos - e.X) > 5)
+                    {
+                        xDiff = xDistance * -1;
+                    }
+
+                    if (e.Y > yPos && Math.Abs(yPos - e.Y) > 5)
+                    {
+                        yDiff = yDistance;
+                    }
+                    else if (e.Y < yPos && Math.Abs(yPos - e.Y) > 5)
+                    {
+                        yDiff = yDistance * -1;
+                    }
+
+                    // TODO: Remove for testing only
+                    System.Diagnostics.Debug.WriteLine("X: " + xDiff + " Y: " + yDiff);
+
+                    if (client != null && mouseEnabled)
+                    {
+                        client.SendCommand("hx" + xDiff.ToString() + "y" + yDiff.ToString());
+
+                        // Sleep to avoid sending commands too quickly
+                        System.Threading.Thread.Sleep(120);
+                    }
+
+                    xPos = e.X;
+                    yPos = e.Y;
                 }
-                else if (e.Y < yPos && Math.Abs(yPos - e.Y) > 5)
-                {
-                    yDiff = -2;
-                }
-
-                // TODO: Remove for testing only
-                System.Diagnostics.Debug.WriteLine("X: " + xDiff + " Y: " + yDiff);
-
-                if (client != null && mouseEnabled)
-                {
-                    client.SendCommand("hx" + xDiff.ToString() + "y" + yDiff.ToString());
-
-                    // Sleep to avoid sending multiple commands too quickly
-                    System.Threading.Thread.Sleep(100);
-                }
-
-                xPos = e.X;
-                yPos = e.Y;
-            }
+            //});
         }
 
 
@@ -361,7 +420,7 @@ namespace RpApplication
         private void StartVideo()
         {
             string options = ":network-caching=0, :file-caching=0, :disc-caching=0, :live-capture-caching=0";           
-            axVLCPlugin21.playlist.add(@"rtsp://192.168.137.7:8554/rp7.stream", null, options);
+            axVLCPlugin21.playlist.add(@"rtsp://" + ipAddress + ":8554/rp7.stream", null, options);
             axVLCPlugin21.playlist.play();
             tb_log.AppendText("Waiting for video...\n");
         }
@@ -384,6 +443,7 @@ namespace RpApplication
                 if (client != null)
                 {
                     client.SendCommand("quit");
+                    axVLCPlugin21.playlist.stop();
                     client.Disconnect();
                 }
             }           
@@ -410,7 +470,7 @@ namespace RpApplication
 
         /// <summary>
         /// Handles clicking the C3PO menu item in the SOUNDS menu and sends 
-        /// the command to switch to the C3PO sound bank.
+        /// the command to switch sound banks.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -424,8 +484,8 @@ namespace RpApplication
 
 
         /// <summary>
-        /// Handles clicking the LOST IN SPACE menu item in the COUNDS menu and sends
-        /// the command to switch to the LOST IN SPACE sound bank.
+        /// Handles clicking the LOST IN SPACE menu item in the SOUNDS menu and sends
+        /// the command to switch sound banks.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -436,6 +496,21 @@ namespace RpApplication
                 client.SendCommand("B1");
             }
         }
+        
+
+        /// <summary>
+        /// Handles clicking the DALEK menu item in the SOUNDS menu and sends
+        /// the command to switch sound banks.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DalekToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (client != null)
+            {
+                client.SendCommand("B2");
+            }
+        }
 
 
         /// <summary>
@@ -444,6 +519,7 @@ namespace RpApplication
         private void RemoteDisconnect()
         {
             client.Disconnect();
+            
             disconnectToolStripMenuItem.Enabled = false;
             connectToolStripMenuItem.Enabled = true;           
         }
@@ -524,7 +600,7 @@ namespace RpApplication
             btn_send.Enabled = false;
         }
 
-        private void tb_message_Enter(object sender, EventArgs e)
+        private void Tb_message_Enter(object sender, EventArgs e)
         {
             if (tb_message.Text.Length > 0)
             {
@@ -542,6 +618,16 @@ namespace RpApplication
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void StartVideoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            axVLCPlugin21.playlist.play();
+        }
+
+        private void StopVideoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            axVLCPlugin21.playlist.stop();
         }
     }
 }

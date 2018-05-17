@@ -39,9 +39,12 @@
             this.headToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MItem_MouseControl = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startVideoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopVideoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.soundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.c3POToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lostInSpaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dalekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.commandListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,6 +56,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel_battLevel = new System.Windows.Forms.Panel();
             this.tp_video = new VideoTest.TransparentPanel(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axVLCPlugin21)).BeginInit();
@@ -131,15 +137,33 @@
             // 
             // helpToolStripMenuItem
             // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.startVideoToolStripMenuItem,
+            this.stopVideoToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.helpToolStripMenuItem.Text = "Camera";
+            // 
+            // startVideoToolStripMenuItem
+            // 
+            this.startVideoToolStripMenuItem.Name = "startVideoToolStripMenuItem";
+            this.startVideoToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.startVideoToolStripMenuItem.Text = "Start Video";
+            this.startVideoToolStripMenuItem.Click += new System.EventHandler(this.StartVideoToolStripMenuItem_Click);
+            // 
+            // stopVideoToolStripMenuItem
+            // 
+            this.stopVideoToolStripMenuItem.Name = "stopVideoToolStripMenuItem";
+            this.stopVideoToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.stopVideoToolStripMenuItem.Text = "Stop Video";
+            this.stopVideoToolStripMenuItem.Click += new System.EventHandler(this.StopVideoToolStripMenuItem_Click);
             // 
             // soundsToolStripMenuItem
             // 
             this.soundsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.c3POToolStripMenuItem,
-            this.lostInSpaceToolStripMenuItem});
+            this.lostInSpaceToolStripMenuItem,
+            this.dalekToolStripMenuItem});
             this.soundsToolStripMenuItem.Name = "soundsToolStripMenuItem";
             this.soundsToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
             this.soundsToolStripMenuItem.Text = "Sounds";
@@ -158,6 +182,13 @@
             this.lostInSpaceToolStripMenuItem.Text = "Lost In Space";
             this.lostInSpaceToolStripMenuItem.Click += new System.EventHandler(this.LostInSpaceToolStripMenuItem_Click);
             // 
+            // dalekToolStripMenuItem
+            // 
+            this.dalekToolStripMenuItem.Name = "dalekToolStripMenuItem";
+            this.dalekToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.dalekToolStripMenuItem.Text = "Dalek";
+            this.dalekToolStripMenuItem.Click += new System.EventHandler(this.DalekToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem1
             // 
             this.helpToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -170,14 +201,14 @@
             // commandListToolStripMenuItem
             // 
             this.commandListToolStripMenuItem.Name = "commandListToolStripMenuItem";
-            this.commandListToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.commandListToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.commandListToolStripMenuItem.Text = "Command List";
             this.commandListToolStripMenuItem.Click += new System.EventHandler(this.CommandListToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
@@ -200,12 +231,13 @@
             this.tb_message.Size = new System.Drawing.Size(398, 86);
             this.tb_message.TabIndex = 3;
             this.tb_message.TextChanged += new System.EventHandler(this.Tb_message_TextChanged);
-            this.tb_message.Enter += new System.EventHandler(this.tb_message_Enter);
+            this.tb_message.Enter += new System.EventHandler(this.Tb_message_Enter);
             this.tb_message.Leave += new System.EventHandler(this.Tb_message_Leave);
             // 
             // btn_send
             // 
             this.btn_send.Enabled = false;
+            this.btn_send.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_send.Location = new System.Drawing.Point(1174, 758);
             this.btn_send.Name = "btn_send";
             this.btn_send.Size = new System.Drawing.Size(398, 31);
@@ -220,19 +252,22 @@
             this.axVLCPlugin21.Location = new System.Drawing.Point(20, 40);
             this.axVLCPlugin21.Name = "axVLCPlugin21";
             this.axVLCPlugin21.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axVLCPlugin21.OcxState")));
-            this.axVLCPlugin21.Size = new System.Drawing.Size(1128, 749);
+            this.axVLCPlugin21.Size = new System.Drawing.Size(1128, 748);
             this.axVLCPlugin21.TabIndex = 5;
             this.axVLCPlugin21.MediaPlayerEncounteredError += new System.EventHandler(this.AxVLCPlugin21_MediaPlayerEncounteredError);
             // 
             // tbar_pan
             // 
             this.tbar_pan.Enabled = false;
+            this.tbar_pan.LargeChange = 10;
             this.tbar_pan.Location = new System.Drawing.Point(294, 815);
             this.tbar_pan.Maximum = 115;
             this.tbar_pan.Minimum = -115;
             this.tbar_pan.Name = "tbar_pan";
             this.tbar_pan.Size = new System.Drawing.Size(584, 45);
+            this.tbar_pan.SmallChange = 10;
             this.tbar_pan.TabIndex = 0;
+            this.tbar_pan.TickFrequency = 10;
             // 
             // label1
             // 
@@ -264,6 +299,32 @@
             this.label3.TabIndex = 9;
             this.label3.Text = "Camera Pan Position";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.label4.Location = new System.Drawing.Point(17, 815);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(54, 18);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Battery";
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Location = new System.Drawing.Point(77, 815);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(200, 23);
+            this.panel1.TabIndex = 12;
+            // 
+            // panel_battLevel
+            // 
+            this.panel_battLevel.BackColor = System.Drawing.SystemColors.HotTrack;
+            this.panel_battLevel.Location = new System.Drawing.Point(77, 815);
+            this.panel_battLevel.Name = "panel_battLevel";
+            this.panel_battLevel.Size = new System.Drawing.Size(0, 23);
+            this.panel_battLevel.TabIndex = 13;
+            // 
             // tp_video
             // 
             this.tp_video.Location = new System.Drawing.Point(20, 40);
@@ -281,6 +342,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1584, 861);
+            this.Controls.Add(this.panel_battLevel);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -338,6 +402,12 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem commandListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dalekToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem startVideoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stopVideoToolStripMenuItem;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel_battLevel;
     }
 }
 

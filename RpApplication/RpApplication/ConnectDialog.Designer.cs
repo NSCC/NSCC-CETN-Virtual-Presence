@@ -28,19 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tb_ipAddress = new System.Windows.Forms.TextBox();
             this.btn_connect = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.btn_cancel = new System.Windows.Forms.Button();
+            this.tb_ipAddress = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
-            // 
-            // tb_ipAddress
-            // 
-            this.tb_ipAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-            this.tb_ipAddress.Location = new System.Drawing.Point(137, 65);
-            this.tb_ipAddress.Name = "tb_ipAddress";
-            this.tb_ipAddress.Size = new System.Drawing.Size(188, 24);
-            this.tb_ipAddress.TabIndex = 0;
             // 
             // btn_connect
             // 
@@ -75,10 +67,22 @@
             this.btn_cancel.UseVisualStyleBackColor = true;
             this.btn_cancel.Click += new System.EventHandler(this.button1_Click);
             // 
+            // tb_ipAddress
+            // 
+            this.tb_ipAddress.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::RpApplication.Properties.Settings.Default, "IpAddress", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.tb_ipAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.tb_ipAddress.Location = new System.Drawing.Point(137, 65);
+            this.tb_ipAddress.Name = "tb_ipAddress";
+            this.tb_ipAddress.Size = new System.Drawing.Size(188, 24);
+            this.tb_ipAddress.TabIndex = 0;
+            this.tb_ipAddress.Text = global::RpApplication.Properties.Settings.Default.IpAddress;
+            // 
             // ConnectDialog
             // 
+            this.AcceptButton = this.btn_connect;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btn_cancel;
             this.ClientSize = new System.Drawing.Size(448, 169);
             this.Controls.Add(this.btn_cancel);
             this.Controls.Add(this.label1);
@@ -90,6 +94,8 @@
             this.Name = "ConnectDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Connect";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ConnectDialog_FormClosed);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ConnectDialog_KeyUp);
             this.ResumeLayout(false);
             this.PerformLayout();
 
