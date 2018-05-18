@@ -16,7 +16,16 @@ namespace RpApplication
         public CommandsDialog()
         {
             InitializeComponent();
-            rtb_commands.LoadFile(".\\resources\\commands.rtf");
+            try
+            {
+                rtb_commands.LoadFile(".\\resources\\commands.rtf");
+            }
+            catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine("File could not be opened: " + ex.Message);
+                rtb_commands.Font = new Font("Microsoft Sans Serif", 11);
+                rtb_commands.Text = "The file 'commands.rtf' could not be found or is in use by another process.";
+            }
+           
 
         }
 

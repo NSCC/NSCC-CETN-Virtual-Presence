@@ -146,15 +146,16 @@
             // 
             // startVideoToolStripMenuItem
             // 
+            this.startVideoToolStripMenuItem.Enabled = false;
             this.startVideoToolStripMenuItem.Name = "startVideoToolStripMenuItem";
-            this.startVideoToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.startVideoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.startVideoToolStripMenuItem.Text = "Start Video";
             this.startVideoToolStripMenuItem.Click += new System.EventHandler(this.StartVideoToolStripMenuItem_Click);
             // 
             // stopVideoToolStripMenuItem
             // 
             this.stopVideoToolStripMenuItem.Name = "stopVideoToolStripMenuItem";
-            this.stopVideoToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.stopVideoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.stopVideoToolStripMenuItem.Text = "Stop Video";
             this.stopVideoToolStripMenuItem.Click += new System.EventHandler(this.StopVideoToolStripMenuItem_Click);
             // 
@@ -252,7 +253,7 @@
             this.axVLCPlugin21.Location = new System.Drawing.Point(20, 40);
             this.axVLCPlugin21.Name = "axVLCPlugin21";
             this.axVLCPlugin21.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axVLCPlugin21.OcxState")));
-            this.axVLCPlugin21.Size = new System.Drawing.Size(1128, 748);
+            this.axVLCPlugin21.Size = new System.Drawing.Size(1128, 749);
             this.axVLCPlugin21.TabIndex = 5;
             this.axVLCPlugin21.MediaPlayerEncounteredError += new System.EventHandler(this.AxVLCPlugin21_MediaPlayerEncounteredError);
             // 

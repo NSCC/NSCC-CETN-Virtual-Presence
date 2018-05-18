@@ -31,18 +31,19 @@ namespace RpApplication
 
         // A list of keys that will send commands. This list is checked so that key presses that don't do anything aren't sent.
         List<Keys> keys = new List<Keys>() {Keys.A, Keys.S, Keys.D, Keys.W, Keys.Q, Keys.E, // Direction controls
-                                            Keys.J, Keys.K, Keys.L, Keys.I, // Head controls
-                                            Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, // Sound controls
+                                            Keys.J, Keys.K, Keys.L, Keys.I, // Head controls                                            
                                             Keys.Enter, // send a message
                                             Keys.Space}; // center the head
+
+        List<Keys> soundKeys = new List<Keys>() { Keys.D0, Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9 }; // Sound controls}
 
 
 
         //DebounceDispatcher mouseMoveThrottle = new DebounceDispatcher();
 
-        /// <summary>
-        /// Creates an instance of the main application form.
-        /// </summary>
+            /// <summary>
+            /// Creates an instance of the main application form.
+            /// </summary>
         public Form1()
         {
             InitializeComponent();
@@ -120,15 +121,15 @@ namespace RpApplication
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Form1_KeyDown(object sender, KeyEventArgs e)
-        {                    
-            if (!isKeyDown && !tb_message.Focused && keys.Contains(e.KeyCode))
+        {
+            if (!isKeyDown && !tb_message.Focused && (keys.Contains(e.KeyCode) || soundKeys.Contains(e.KeyCode)))
             {
                 // TODO: Remove this line, for testing only
                 System.Diagnostics.Debug.WriteLine("key pressed: " + e.KeyCode.ToString().ToLower());
 
                 if (client != null)
                 {
-                    if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+                    if (soundKeys.Contains(e.KeyCode))
                     {
                         client.SendCommand("p" + e.KeyCode.ToString().Substring(1));
                     }
@@ -138,6 +139,10 @@ namespace RpApplication
                     }
                 }
                 isKeyDown = true;
+            }
+            else if (e.KeyCode == Keys.M)
+            {
+                this.ActiveControl = tb_message;
             }
             else
             {
@@ -160,7 +165,7 @@ namespace RpApplication
             System.Diagnostics.Debug.WriteLine("key up");
 
             // Send key up all the time as a safety precaution (for now anyway)
-            if (client != null)
+            if (client != null && !soundKeys.Contains(e.KeyCode))
             {
                 client.SendCommand("stop");
             }           
@@ -243,7 +248,7 @@ namespace RpApplication
                             }
                             else
                             {
-                                panel_battLevel.Width = ((int)batt - 20) * 20;
+                                panel_battLevel.Width = (int)((batt - 20) * 20);
                             }
                         }
                     });
@@ -264,7 +269,7 @@ namespace RpApplication
                         }
                         else
                         {
-                            panel_battLevel.Width = ((int)batt - 20) * 20;
+                            panel_battLevel.Width = (int)((batt - 20) * 20);
                         }
                     }
                 }
@@ -596,7 +601,8 @@ namespace RpApplication
         /// <param name="e"></param>
         private void Form1_Click(object sender, EventArgs e)
         {
-            this.ActiveControl = tp_video;
+            // move the focus away from the message textbox
+            this.ActiveControl = label1;
             btn_send.Enabled = false;
         }
 
@@ -611,23 +617,27 @@ namespace RpApplication
         private void CommandListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CommandsDialog commandDialog = new CommandsDialog();
-            commandDialog.ShowDialog();
-            
+            commandDialog.ShowDialog();            
         }
 
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            AboutDialog aboutDialog = new AboutDialog();
+            aboutDialog.ShowDialog();
         }
 
         private void StartVideoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             axVLCPlugin21.playlist.play();
+            startVideoToolStripMenuItem.Enabled = false;
+            stopVideoToolStripMenuItem.Enabled = true;
         }
 
         private void StopVideoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             axVLCPlugin21.playlist.stop();
+            stopVideoToolStripMenuItem.Enabled = false;
+            startVideoToolStripMenuItem.Enabled = true;
         }
     }
 }
