@@ -18,7 +18,7 @@ namespace RpApplication
             tb_about.Select(0, 0);
         }
 
-        private void btn_ok_Click(object sender, EventArgs e)
+        private void Btn_ok_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

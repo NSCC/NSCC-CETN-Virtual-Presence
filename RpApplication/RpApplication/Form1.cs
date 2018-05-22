@@ -48,71 +48,7 @@ namespace RpApplication
         {
             InitializeComponent();
             tb_log.AppendText("Wait for robot to calibrate before connecting.\n");
-        }
-        
-        
-        /// <summary>
-        /// Handles clicking the CONNECT menu item located in the NETWORK menu. 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Connect_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.client = new RPClient();
-
-            using (ConnectDialog connDialog = new ConnectDialog())
-            {
-                if (connDialog.ShowDialog() == DialogResult.OK)
-                {
-                    ipAddress = connDialog.IpAddress;
-
-                    client.ReceiveMessage += new ReceiveMessageEventHandler(RPClientLib_ReceiveMessage);
-
-                    if (!client.Connect(ipAddress, port))
-                    {
-                        tb_log.AppendText("Could not connect.\n");
-                        client = null;
-                    }
-                    else
-                    {
-                        client.ListenForMessages();
-                        tb_log.AppendText("Connection successful.\n");
-                        connected = true;
-
-                        disconnectToolStripMenuItem.Enabled = true;
-                        connectToolStripMenuItem.Enabled = false;
-
-                        StartVideo();
-                    }
-                }
-            }           
-        }
-
-
-        /// <summary>
-        /// Handles clicking the DISCONNECT menu item in the NETWORKING menu.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Disconnect_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (client != null)
-            {
-                client.SendCommand("quit");
-                client.Disconnect();
-            }
-
-            connected = false;
-            connectToolStripMenuItem.Enabled = true;
-            disconnectToolStripMenuItem.Enabled = false;
-
-            // reset the GUI pan position  
-            tbar_pan.Value = 0;
-
-            // stop the video
-            axVLCPlugin21.playlist.stop();
-            tb_log.AppendText("Disconnected");
-        }
+        }     
 
 
         /// <summary>
@@ -164,7 +100,7 @@ namespace RpApplication
             //TODO: Remove this code -  for testing only
             System.Diagnostics.Debug.WriteLine("key up");
 
-            // Send key up all the time as a safety precaution (for now anyway)
+            // Send key up all the time as a safety precaution except for the sound keys (for now anyway)
             if (client != null && !soundKeys.Contains(e.KeyCode))
             {
                 client.SendCommand("stop");
@@ -185,94 +121,15 @@ namespace RpApplication
             if (e.Message[0] == 'q')
             {
                 message = "The robot has disconnected";
-                if (this.InvokeRequired)
-                {
-                    MethodInvoker invoker = new MethodInvoker(delegate ()
-                    {
-                        this.RemoteDisconnect();
-                    });
-
-                    this.BeginInvoke(invoker);
-                }
-                else
-                {
-                    this.RemoteDisconnect();
-                }
+                InvokeRemoteDisconnect();                
             }
             else if (e.Message.Substring(0, 3) == "pan")
             {
-                if (tbar_pan.InvokeRequired)
-                {
-                    MethodInvoker invoker = new MethodInvoker(delegate ()
-                    {
-                        Int32 val;
-                        if (int.TryParse(e.Message.Substring(3), out val))
-                        {
-                            if (val <= 115 && val > -115)
-                            {
-                                tbar_pan.Value = val;
-                            }
-
-                        }
-                    });
-                    tbar_pan.BeginInvoke(invoker);
-                }
-                else
-                {
-                    Int32 val;
-                    if (int.TryParse(e.Message.Substring(3), out val))
-                    {
-                        if (val <= 115 && val > -115)
-                        {
-                            tbar_pan.Value = val;
-                        }
-                    }
-                }
+                InvokePanTrackBar(e.Message);                
             }
             else if (e.Message.Substring(0, 4) == "batt")
             {
-                if (panel_battLevel.InvokeRequired)
-                {
-                    MethodInvoker invoker = new MethodInvoker(delegate ()
-                    {
-                        double batt;
-                        if (double.TryParse(e.Message.Substring(4), out batt))
-                        {                            
-                            if (batt < 20.5)
-                            {
-                                panel_battLevel.Width = 0;
-                            }
-                            else if (batt > 28.5)
-                            {
-                                panel_battLevel.Width = 200;
-                            }
-                            else
-                            {
-                                panel_battLevel.Width = (int)((batt - 20) * 20);
-                            }
-                        }
-                    });
-                    panel_battLevel.BeginInvoke(invoker);
-                }
-                else
-                {
-                    double batt;
-                    if (double.TryParse(e.Message.Substring(4), out batt))
-                    {                       
-                        if (batt < 20.5)
-                        {
-                            panel_battLevel.Width = 0;
-                        }
-                        else if (batt > 28.5)
-                        {
-                            panel_battLevel.Width = 200;
-                        }
-                        else
-                        {
-                            panel_battLevel.Width = (int)((batt - 20) * 20);
-                        }
-                    }
-                }
+                InvokeBatteryLevelPanel(e.Message);                
             }
             else
             {
@@ -413,8 +270,7 @@ namespace RpApplication
             if (client != null)
             {
                 client.SendCommand("cen");
-            }
-            
+            }            
         }
 
 
@@ -471,6 +327,70 @@ namespace RpApplication
             btn_send.Enabled = false;
             this.ActiveControl = tp_video;
         }
+        
+
+        /// <summary>
+        /// Handles clicking the CONNECT menu item located in the NETWORK menu. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Connect_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.client = new RPClient();
+
+            using (ConnectDialog connDialog = new ConnectDialog())
+            {
+                if (connDialog.ShowDialog() == DialogResult.OK)
+                {
+                    ipAddress = connDialog.IpAddress;
+
+                    client.ReceiveMessage += new ReceiveMessageEventHandler(RPClientLib_ReceiveMessage);
+
+                    if (!client.Connect(ipAddress, port))
+                    {
+                        tb_log.AppendText("Could not connect.\n");
+                        client = null;
+                    }
+                    else
+                    {
+                        client.ListenForMessages();
+                        tb_log.AppendText("Connection successful.\n");
+                        connected = true;
+
+                        disconnectToolStripMenuItem.Enabled = true;
+                        connectToolStripMenuItem.Enabled = false;
+
+                        StartVideo();
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Handles clicking the DISCONNECT menu item in the NETWORKING menu.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Disconnect_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (client != null)
+            {
+                client.SendCommand("quit");
+                client.Disconnect();
+            }
+
+            connected = false;
+            connectToolStripMenuItem.Enabled = true;
+            disconnectToolStripMenuItem.Enabled = false;
+
+            // reset the GUI pan position  
+            tbar_pan.Value = 0;
+
+            // stop the video
+            axVLCPlugin21.playlist.stop();
+            tb_log.AppendText("Disconnected\n");
+        }
 
 
         /// <summary>
@@ -523,8 +443,7 @@ namespace RpApplication
         /// </summary>
         private void RemoteDisconnect()
         {
-            client.Disconnect();
-            
+            client.Disconnect();            
             disconnectToolStripMenuItem.Enabled = false;
             connectToolStripMenuItem.Enabled = true;           
         }
@@ -606,6 +525,12 @@ namespace RpApplication
             btn_send.Enabled = false;
         }
 
+
+        /// <summary>
+        /// Enables the text-to-speech send button when the text box enters focus.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Tb_message_Enter(object sender, EventArgs e)
         {
             if (tb_message.Text.Length > 0)
@@ -614,18 +539,38 @@ namespace RpApplication
             }
         }
 
+
+        /// <summary>
+        /// Handles clicking the COMMANDS LIST menu item in the HELP menu 
+        /// and displays a dialog box with the available commands.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CommandListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CommandsDialog commandDialog = new CommandsDialog();
             commandDialog.ShowDialog();            
         }
 
+
+        /// <summary>
+        /// Handles clicking the ABOUT menu intem in the HELP menu
+        /// and displays a dialog with information about the application.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AboutDialog aboutDialog = new AboutDialog();
             aboutDialog.ShowDialog();
         }
 
+
+        /// <summary>
+        /// Handles clicking the START VIDEO menu item in the CAMERA menu and starts the video stream.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void StartVideoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             axVLCPlugin21.playlist.play();
@@ -633,11 +578,125 @@ namespace RpApplication
             stopVideoToolStripMenuItem.Enabled = true;
         }
 
+
+        /// <summary>
+        /// Handles clicking the STOP VIDEO menu item in the CAMERA menu and stops the video stream.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void StopVideoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             axVLCPlugin21.playlist.stop();
             stopVideoToolStripMenuItem.Enabled = false;
             startVideoToolStripMenuItem.Enabled = true;
         }
-    }
-}
+
+
+        /// <summary>
+        /// Determines if an invoke is required to handle a remote disconnect.
+        /// </summary>
+        private void InvokeRemoteDisconnect() {
+            if (this.InvokeRequired)
+            {
+                MethodInvoker invoker = new MethodInvoker(delegate ()
+                {
+                    this.RemoteDisconnect();
+                });
+
+                this.BeginInvoke(invoker);
+            }
+            else
+            {
+                this.RemoteDisconnect();
+            }
+        }
+
+
+        /// <summary>
+        /// Determines if an invoke is required to adjust the Pan track bar.
+        /// </summary>
+        /// <param name="message"></param>
+        private void InvokePanTrackBar(string message)
+        {
+            if (tbar_pan.InvokeRequired)
+            {
+                MethodInvoker invoker = new MethodInvoker(delegate ()
+                {
+                    Int32 val;
+                    if (int.TryParse(message.Substring(3), out val))
+                    {
+                        if (val <= 115 && val > -115)
+                        {
+                            tbar_pan.Value = val;
+                        }
+
+                    }
+                });
+                tbar_pan.BeginInvoke(invoker);
+            }
+            else
+            {
+                Int32 val;
+                if (int.TryParse(message.Substring(3), out val))
+                {
+                    if (val <= 115 && val > -115)
+                    {
+                        tbar_pan.Value = val;
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Determines if an invoke is required to adjust the Battery Level.
+        /// </summary>
+        /// <param name="message"></param>
+        private void InvokeBatteryLevelPanel(string message)
+        {
+            if (panel_battLevel.InvokeRequired)
+            {
+                MethodInvoker invoker = new MethodInvoker(delegate ()
+                {
+                    double batt;
+                    if (double.TryParse(message.Substring(4), out batt))
+                    {
+                        if (batt < 20.5)
+                        {
+                            panel_battLevel.Width = 0;
+                        }
+                        else if (batt > 28.5)
+                        {
+                            panel_battLevel.Width = 200;
+                        }
+                        else
+                        {
+                            panel_battLevel.Width = (int)((batt - 20) * 20);
+                        }
+                    }
+                });
+                panel_battLevel.BeginInvoke(invoker);
+            }
+            else
+            {
+                double batt;
+                if (double.TryParse(message.Substring(4), out batt))
+                {
+                    if (batt < 20.5)
+                    {
+                        panel_battLevel.Width = 0;
+                    }
+                    else if (batt > 28.5)
+                    {
+                        panel_battLevel.Width = 200;
+                    }
+                    else
+                    {
+                        panel_battLevel.Width = (int)((batt - 20) * 20);
+                    }
+                }
+            }
+        }
+
+    }// end class
+} //end namespace

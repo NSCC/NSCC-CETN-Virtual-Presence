@@ -65,7 +65,7 @@
             this.btn_cancel.TabIndex = 3;
             this.btn_cancel.Text = "Cancel";
             this.btn_cancel.UseVisualStyleBackColor = true;
-            this.btn_cancel.Click += new System.EventHandler(this.button1_Click);
+            this.btn_cancel.Click += new System.EventHandler(this.Button1_Click);
             // 
             // tb_ipAddress
             // 
