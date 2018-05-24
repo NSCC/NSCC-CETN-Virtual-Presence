@@ -67,7 +67,7 @@ namespace RpApplication
                 {
                     if (soundKeys.Contains(e.KeyCode))
                     {
-                        client.SendCommand("p" + e.KeyCode.ToString().Substring(1));
+                        client.SendCommand("p" + e.KeyCode.ToString().Substring(1)); // Play sound commands begin with "p"
                     }
                     else
                     {
@@ -76,13 +76,13 @@ namespace RpApplication
                 }
                 isKeyDown = true;
             }
-            else if (e.KeyCode == Keys.M)
+            else if (e.KeyCode == Keys.M) // puts focus on the text-to-speech message box
             {
                 this.ActiveControl = tb_message;
             }
             else
             {
-                if (e.KeyCode == Keys.Enter)
+                if (e.KeyCode == Keys.Enter) // sends the message in the text-to-speech message box
                 {
                     btn_send.PerformClick();
                 }
@@ -104,7 +104,8 @@ namespace RpApplication
             if (client != null && !soundKeys.Contains(e.KeyCode))
             {
                 client.SendCommand("stop");
-            }           
+            }
+            
             isKeyDown = false;
         }
                        
@@ -118,24 +119,26 @@ namespace RpApplication
         {
             String message = String.Empty;
 
-            if (e.Message[0] == 'q')
+            
+            if (e.Message[0] == 'q') // The robot application was termintated
             {
                 message = "The robot has disconnected";
                 InvokeRemoteDisconnect();                
             }
-            else if (e.Message.Substring(0, 3) == "pan")
+            else if (e.Message.Substring(0, 3) == "pan") // Robot is sending the head pan position
             {
                 InvokePanTrackBar(e.Message);                
             }
-            else if (e.Message.Substring(0, 4) == "batt")
+            else if (e.Message.Substring(0, 4) == "batt") // Robot is sending a bettery reading
             {
                 InvokeBatteryLevelPanel(e.Message);                
             }
             else
             {
-                message = e.Message;
+                message = e.Message; // all other messages
             }           
 
+            // Write the message to the GUI
             if (tb_log.InvokeRequired)
             {
                 MethodInvoker invoker = new MethodInvoker(delegate ()
@@ -194,46 +197,45 @@ namespace RpApplication
         /// <param name="e"></param>
         private void Tp_video_MouseMove(object sender, MouseEventArgs e)
         {
-            //mouseMoveThrottle.Throttle(100, action =>
-            //{
-                if (mouseIsDown)
+            if (mouseIsDown) // need to be pressing the mouse button to control the head
+            {
+                int yDiff = 0;
+                int xDiff = 0;
+                    
+                // Check the difference in mouse position to know which way to move and 
+                // also check that the mouse moved more than 5 to avoid over sending commands
+                if (e.X > xPos && Math.Abs(xPos - e.X) > 5)
                 {
-                    int yDiff = 0;
-                    int xDiff = 0;
-
-                    if (e.X > xPos && Math.Abs(xPos - e.X) > 5)
-                    {
-                        xDiff = xDistance;
-                    }
-                    else if (e.X < xPos && Math.Abs(xPos - e.X) > 5)
-                    {
-                        xDiff = xDistance * -1;
-                    }
-
-                    if (e.Y > yPos && Math.Abs(yPos - e.Y) > 5)
-                    {
-                        yDiff = yDistance;
-                    }
-                    else if (e.Y < yPos && Math.Abs(yPos - e.Y) > 5)
-                    {
-                        yDiff = yDistance * -1;
-                    }
-
-                    // TODO: Remove for testing only
-                    System.Diagnostics.Debug.WriteLine("X: " + xDiff + " Y: " + yDiff);
-
-                    if (client != null && mouseEnabled)
-                    {
-                        client.SendCommand("hx" + xDiff.ToString() + "y" + yDiff.ToString());
-
-                        // Sleep to avoid sending commands too quickly
-                        System.Threading.Thread.Sleep(120);
-                    }
-
-                    xPos = e.X;
-                    yPos = e.Y;
+                    xDiff = xDistance;
                 }
-            //});
+                else if (e.X < xPos && Math.Abs(xPos - e.X) > 5)
+                {
+                    xDiff = xDistance * -1;
+                }
+
+                if (e.Y > yPos && Math.Abs(yPos - e.Y) > 5)
+                {
+                    yDiff = yDistance;
+                }
+                else if (e.Y < yPos && Math.Abs(yPos - e.Y) > 5)
+                {
+                    yDiff = yDistance * -1;
+                }
+
+                // TODO: Remove for testing only
+                System.Diagnostics.Debug.WriteLine("X: " + xDiff + " Y: " + yDiff);
+
+                if (client != null && mouseEnabled)
+                {
+                    client.SendCommand("hx" + xDiff.ToString() + "y" + yDiff.ToString()); // Commands to move the head begin with "h" followed by the x and y coords
+
+                    // Sleep to avoid sending commands too quickly
+                    System.Threading.Thread.Sleep(120);
+                }
+
+                xPos = e.X;
+                yPos = e.Y;
+            }            
         }
 
 
@@ -280,8 +282,15 @@ namespace RpApplication
         /// </summary>
         private void StartVideo()
         {
-            string options = ":network-caching=0, :file-caching=0, :disc-caching=0, :live-capture-caching=0";           
+            // set all caching values to 0 to reduce lag times
+            string options = ":network-caching=0, :file-caching=0, :disc-caching=0, :live-capture-caching=0";  
+            
+            // ### Uncomment the next line to use RTSP stream ###
             axVLCPlugin21.playlist.add(@"rtsp://" + ipAddress + ":8554/rp7.stream", null, options);
+
+            // ### Uncomment this line to use UDP stream ###
+            //axVLCPlugin21.playlist.add(@"udp://@");
+
             axVLCPlugin21.playlist.play();
             tb_log.AppendText("Waiting for video...\n");
         }
@@ -361,6 +370,7 @@ namespace RpApplication
                         connectToolStripMenuItem.Enabled = false;
 
                         StartVideo();
+                        stopVideoToolStripMenuItem.Enabled = true;
                     }
                 }
             }
@@ -383,6 +393,8 @@ namespace RpApplication
             connected = false;
             connectToolStripMenuItem.Enabled = true;
             disconnectToolStripMenuItem.Enabled = false;
+            stopVideoToolStripMenuItem.Enabled = false;
+            startVideoToolStripMenuItem.Enabled = false;
 
             // reset the GUI pan position  
             tbar_pan.Value = 0;
@@ -403,7 +415,7 @@ namespace RpApplication
         {
             if (client != null)
             {
-                client.SendCommand("B0");
+                client.SendCommand("B0"); // sound bank commands start with "B"
             }
         }
 
@@ -418,7 +430,7 @@ namespace RpApplication
         {
             if (client != null)
             {
-                client.SendCommand("B1");
+                client.SendCommand("B1"); // sound bank commands start with "B"
             }
         }
         
@@ -433,7 +445,7 @@ namespace RpApplication
         {
             if (client != null)
             {
-                client.SendCommand("B2");
+                client.SendCommand("B2"); // sound bank commands start with "B"
             }
         }
 

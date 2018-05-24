@@ -22,7 +22,7 @@ namespace RPClientLib
 
         public event ReceiveMessageEventHandler ReceiveMessage;
 
-        public RPClient() { }
+        public RPClient() { }      
 
 
         /// <summary>
@@ -44,7 +44,6 @@ namespace RPClientLib
                 System.Diagnostics.Debug.WriteLine("Unable to connect: " + ex.Message);
                 return false;
             }           
-           
             return true;
         }
 
@@ -87,13 +86,11 @@ namespace RPClientLib
 
                     // TODO: Delete this line for testing only
                     System.Diagnostics.Debug.WriteLine("Command sent: " + command);
-
                 }
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine("Command could not be sent: " + ex.Message);
-                }
-               
+                }               
             }
             else
             {
@@ -147,7 +144,11 @@ namespace RPClientLib
                     }
                     catch (ObjectDisposedException e)
                     {
-                        //TODO: Handle the error.
+                        System.Diagnostics.Debug.WriteLine("Error receiving message: " + e.Message);
+                        if (ReceiveMessage != null)
+                        {
+                            ReceiveMessage(this, new ReceivedMessageEventArgs("An ERROR has occured. Did not receive message."));
+                        }
                     }                    
                 }
             }
