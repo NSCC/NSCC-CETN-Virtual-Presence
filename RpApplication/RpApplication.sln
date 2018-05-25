@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2037
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RpApplication", "RpApplication\RpApplication.csproj", "{88959838-0EAA-4793-9E7F-D0A9F56343DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPClientLib", "RPClientLib\RPClientLib.csproj", "{A0D41156-49FF-459B-9EA8-FFBDBFA1E84A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88959838-0EAA-4793-9E7F-D0A9F56343DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88959838-0EAA-4793-9E7F-D0A9F56343DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88959838-0EAA-4793-9E7F-D0A9F56343DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88959838-0EAA-4793-9E7F-D0A9F56343DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0D41156-49FF-459B-9EA8-FFBDBFA1E84A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0D41156-49FF-459B-9EA8-FFBDBFA1E84A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0D41156-49FF-459B-9EA8-FFBDBFA1E84A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0D41156-49FF-459B-9EA8-FFBDBFA1E84A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FC31A411-338B-4609-A4B9-98AE6FE7440B}
+	EndGlobalSection
+EndGlobal
