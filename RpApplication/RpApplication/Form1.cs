@@ -47,7 +47,7 @@ namespace RpApplication
         public Form1()
         {
             InitializeComponent();
-            tb_log.AppendText("Wait for robot to calibrate before connecting.\n");
+            tb_log.AppendText("Wait for robot to calibrate before connecting.\n");            
         }     
 
 
@@ -365,9 +365,14 @@ namespace RpApplication
                         client.ListenForMessages();
                         tb_log.AppendText("Connection successful.\n");
                         connected = true;
-
+                        
                         disconnectToolStripMenuItem.Enabled = true;
                         connectToolStripMenuItem.Enabled = false;
+
+                        // We are now connected so we can change sound banks
+                        c3POToolStripMenuItem.Enabled = true;
+                        lostInSpaceToolStripMenuItem.Enabled = true;
+                        dalekToolStripMenuItem.Enabled = true;
 
                         StartVideo();
                         stopVideoToolStripMenuItem.Enabled = true;
@@ -395,6 +400,12 @@ namespace RpApplication
             disconnectToolStripMenuItem.Enabled = false;
             stopVideoToolStripMenuItem.Enabled = false;
             startVideoToolStripMenuItem.Enabled = false;
+            c3POToolStripMenuItem.Enabled = false;
+            lostInSpaceToolStripMenuItem.Enabled = false;
+            dalekToolStripMenuItem.Enabled = false;
+            c3POToolStripMenuItem.Checked = true;
+            lostInSpaceToolStripMenuItem.Checked = false;
+            dalekToolStripMenuItem.Checked = false;
 
             // reset the GUI pan position  
             tbar_pan.Value = 0;
@@ -416,6 +427,9 @@ namespace RpApplication
             if (client != null)
             {
                 client.SendCommand("B0"); // sound bank commands start with "B"
+                lostInSpaceToolStripMenuItem.Checked = false;
+                c3POToolStripMenuItem.Checked = true;
+                dalekToolStripMenuItem.Checked = false;
             }
         }
 
@@ -431,6 +445,9 @@ namespace RpApplication
             if (client != null)
             {
                 client.SendCommand("B1"); // sound bank commands start with "B"
+                lostInSpaceToolStripMenuItem.Checked = true;
+                c3POToolStripMenuItem.Checked = false;
+                dalekToolStripMenuItem.Checked = false;
             }
         }
         
@@ -446,6 +463,9 @@ namespace RpApplication
             if (client != null)
             {
                 client.SendCommand("B2"); // sound bank commands start with "B"
+                lostInSpaceToolStripMenuItem.Checked = false;
+                c3POToolStripMenuItem.Checked = false;
+                dalekToolStripMenuItem.Checked = true;
             }
         }
 

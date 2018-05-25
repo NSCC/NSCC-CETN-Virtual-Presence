@@ -148,7 +148,7 @@
             // 
             this.startVideoToolStripMenuItem.Enabled = false;
             this.startVideoToolStripMenuItem.Name = "startVideoToolStripMenuItem";
-            this.startVideoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.startVideoToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.startVideoToolStripMenuItem.Text = "Start Video";
             this.startVideoToolStripMenuItem.Click += new System.EventHandler(this.StartVideoToolStripMenuItem_Click);
             // 
@@ -156,7 +156,7 @@
             // 
             this.stopVideoToolStripMenuItem.Enabled = false;
             this.stopVideoToolStripMenuItem.Name = "stopVideoToolStripMenuItem";
-            this.stopVideoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.stopVideoToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.stopVideoToolStripMenuItem.Text = "Stop Video";
             this.stopVideoToolStripMenuItem.Click += new System.EventHandler(this.StopVideoToolStripMenuItem_Click);
             // 
@@ -172,22 +172,27 @@
             // 
             // c3POToolStripMenuItem
             // 
+            this.c3POToolStripMenuItem.Checked = true;
+            this.c3POToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.c3POToolStripMenuItem.Enabled = false;
             this.c3POToolStripMenuItem.Name = "c3POToolStripMenuItem";
-            this.c3POToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.c3POToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.c3POToolStripMenuItem.Text = "C3PO";
             this.c3POToolStripMenuItem.Click += new System.EventHandler(this.C3POToolStripMenuItem_Click);
             // 
             // lostInSpaceToolStripMenuItem
             // 
+            this.lostInSpaceToolStripMenuItem.Enabled = false;
             this.lostInSpaceToolStripMenuItem.Name = "lostInSpaceToolStripMenuItem";
-            this.lostInSpaceToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.lostInSpaceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.lostInSpaceToolStripMenuItem.Text = "Lost In Space";
             this.lostInSpaceToolStripMenuItem.Click += new System.EventHandler(this.LostInSpaceToolStripMenuItem_Click);
             // 
             // dalekToolStripMenuItem
             // 
+            this.dalekToolStripMenuItem.Enabled = false;
             this.dalekToolStripMenuItem.Name = "dalekToolStripMenuItem";
-            this.dalekToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.dalekToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dalekToolStripMenuItem.Text = "Dalek";
             this.dalekToolStripMenuItem.Click += new System.EventHandler(this.DalekToolStripMenuItem_Click);
             // 
@@ -254,7 +259,7 @@
             this.axVLCPlugin21.Location = new System.Drawing.Point(20, 40);
             this.axVLCPlugin21.Name = "axVLCPlugin21";
             this.axVLCPlugin21.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axVLCPlugin21.OcxState")));
-            this.axVLCPlugin21.Size = new System.Drawing.Size(1128, 748);
+            this.axVLCPlugin21.Size = new System.Drawing.Size(1128, 749);
             this.axVLCPlugin21.TabIndex = 5;
             this.axVLCPlugin21.MediaPlayerEncounteredError += new System.EventHandler(this.AxVLCPlugin21_MediaPlayerEncounteredError);
             // 
