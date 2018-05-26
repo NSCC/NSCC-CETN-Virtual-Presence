@@ -541,7 +541,8 @@ namespace RpApplication
         /// <param name="e"></param>
         private void Tb_message_Leave(object sender, EventArgs e)
         {
-            btn_send.Enabled = false;
+            
+            //btn_send.Enabled = false;
         }
 
 
